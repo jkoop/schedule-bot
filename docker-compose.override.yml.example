@@ -1,0 +1,18 @@
+services:
+  app:
+    environment:
+      DISCORD_APP_ID: "1111111111111111111"
+      DISCORD_PUBLIC_KEY: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      DISCORD_TOKEN: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    networks:
+      - traefik-public
+    labels:
+      traefik.enable: true
+      traefik.http.routers.schedule-bot.rule: Host(`schedule-bot.example.com`)
+      traefik.http.routers.schedule-bot.entrypoints: websecure
+      traefik.http.routers.schedule-bot.tls.certresolver: myresolver
+      traefik.http.services.schedule-bot.loadbalancer.server.port: 8080
+
+networks:
+  traefik-public:
+    external: true

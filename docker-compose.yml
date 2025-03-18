@@ -1,0 +1,8 @@
+services:
+  app:
+    image: serversideup/php:8.4-fpm-nginx-alpine
+    environment:
+      PHP_OPCACHE_ENABLE: 1
+      SSL_MODE: "off"
+    volumes:
+      - .:/var/www/html
