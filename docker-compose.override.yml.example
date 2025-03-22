@@ -1,7 +1,10 @@
 services:
   app:
     environment:
+      BASE_URL: "https://schedule-bot.example.com"
+      CALDAV_SECRET: "000000000000000000000000"
       DISCORD_APP_ID: "1111111111111111111"
+      DISCORD_CHANNEL: "1111111111111111111"
       DISCORD_PUBLIC_KEY: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
       DISCORD_TOKEN: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
     networks:

@@ -4,6 +4,7 @@ include_once "../functions.php";
 
 use Discord\Interaction;
 use Discord\InteractionResponseType;
+use Symfony\Component\Yaml\Yaml;
 
 if ($_SERVER["REQUEST_METHOD"] != "POST") abort(AbortReason::MethodNotAllowed);
 
@@ -23,17 +24,28 @@ j_log(json_encode($request));
 if (request_is_ping($request)) {
     respond([ "type" => ResponseType::Pong ]);
 } else if (request_is_command($request)) {
-    $command = $request->data->name;
-    $args = $request->data->options;
-    // https://discord.com/developers/docs/interactions/application-commands#application-command-object-application-command-types
-    $type = $request->data->type;
+    if ($request->data->type != 1) {
+        respond_to_slash_command($request, "E: unknown interaction type: " . $request->data->type);
+    }
 
-    if ($command == "blep") {
-        respond_to_interaction($request, [
-            "type" => CHANNEL_MESSAGE_WITH_SOURCE,
-            "data" => [
-                "content" => "OK",
-            ],
-        ]);
+    try {
+        $args = [];
+        foreach ($request->data->options as $option) {
+            $args[$option->name] = $option->value;
+        }
+
+        include_once "../commands/router.php";
+        respond_to_slash_command($request, command_router($request->data->name, $args));
+    } catch (Throwable $e) {
+        $class_name = get_class($e);
+        $message = $e->getMessage();
+        $stack_trace = $e->getTraceAsString();
+        respond_to_slash_command(
+            $request,
+            "Uncaught " . $class_name . ": **" . $message . "**  \n" .
+            "```plain\n" .
+            "thrown in " . $e->getFile() . ":" . $e->getLine() . "\n" .
+            $stack_trace . "\n" .
+            "```");
     }
 }
